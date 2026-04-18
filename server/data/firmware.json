@@ -1,0 +1,58 @@
+[
+  {
+    "device_name": "Galaxy S23 Ultra",
+    "firmware_version": "S918BXXU1AWBD",
+    "android_version": "13",
+    "download_link": "https://server.fixprohub.com/fw/S918BXXU1AWBD.zip",
+    "file_size": "8.4 GB",
+    "region": "EUX"
+  },
+  {
+    "device_name": "Galaxy S24 Ultra",
+    "firmware_version": "S928BXXU2AXCD",
+    "android_version": "14",
+    "download_link": "https://server.fixprohub.com/fw/S928BXXU2AXCD.zip",
+    "file_size": "9.1 GB",
+    "region": "EUX"
+  },
+  {
+    "device_name": "Galaxy A54 5G",
+    "firmware_version": "A546BXXU4CXD1",
+    "android_version": "14",
+    "download_link": "https://server.fixprohub.com/fw/A546BXXU4CXD1.zip",
+    "file_size": "6.2 GB",
+    "region": "INS"
+  },
+  {
+    "device_name": "Redmi Note 12 Pro",
+    "firmware_version": "V816.0.5.0.TMOMIXM",
+    "android_version": "13",
+    "download_link": "https://server.fixprohub.com/fw/RN12Pro_V816.zip",
+    "file_size": "4.8 GB",
+    "region": "Global"
+  },
+  {
+    "device_name": "POCO X6 Pro",
+    "firmware_version": "V816.0.7.0.UNOMIXM",
+    "android_version": "14",
+    "download_link": "https://server.fixprohub.com/fw/POCOX6Pro_V816.zip",
+    "file_size": "5.2 GB",
+    "region": "Global"
+  },
+  {
+    "device_name": "OnePlus 12",
+    "firmware_version": "CPH2583_15.0.0.600",
+    "android_version": "15",
+    "download_link": "https://server.fixprohub.com/fw/OP12_15.0.0.600.zip",
+    "file_size": "7.8 GB",
+    "region": "EU"
+  },
+  {
+    "device_name": "Pixel 8 Pro",
+    "firmware_version": "AP2A.240805.005",
+    "android_version": "15",
+    "download_link": "https://server.fixprohub.com/fw/P8Pro_AP2A.zip",
+    "file_size": "3.6 GB",
+    "region": "Global"
+  }
+]

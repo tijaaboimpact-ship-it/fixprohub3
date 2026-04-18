@@ -1,0 +1,10 @@
+[
+  {
+    "user_id": 1690000000000,
+    "license_key": "FIXPRO-LIFETIME-XXXX",
+    "plan_type": "lifetime",
+    "status": "active",
+    "hwid": null,
+    "hwid_resets_available": 3
+  }
+]

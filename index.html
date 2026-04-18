@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="description" content="FixPro Hub - Professional Firmware Servicing Platform for Mobile Device Repair" />
+    <meta name="theme-color" content="#0a0a0f" />
+    <title>FixPro Hub - Firmware Tool</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  </head>
+  <body class="bg-[#0a0a0f] text-slate-200 antialiased selection:bg-blue-500/30">
+    <!-- Initial Loading Screen -->
+    <div id="preloader">
+      <div class="loader-container">
+        <div class="loader-circle"></div>
+        <div class="loader-inner"></div>
+        <div class="loader-logo"></div>
+      </div>
+      <div class="loader-text">FIXPRO HUB</div>
+      <div class="loader-subtext">INITIALIZING CORE SYSTEMS...</div>
+    </div>
+
+    <!-- React Root Entry -->
+    <div id="root" class="h-full w-full"></div>
+    <script type="module" src="/src/main.tsx"></script>
+
+    <!-- Preloader Removal Script -->
+    <script>
+      window.addEventListener('load', () => {
+        const preloader = document.getElementById('preloader');
+        if (preloader) {
+          // Add a tiny delay so the beautiful loader is visible for a moment
+          setTimeout(() => {
+            preloader.style.opacity = '0';
+            setTimeout(() => {
+              preloader.remove();
+            }, 500); // Wait for transition
+          }, 800);
+        }
+      });
+    </script>
+  </body>
+</html>

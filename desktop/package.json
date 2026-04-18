@@ -1,0 +1,37 @@
+{
+  "name": "fixprohub-desktop",
+  "version": "1.0.0",
+  "description": "Desktop app for FixPro Hub — wraps Vite/React frontend with Electron for native fastboot access",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "concurrently \"npm run dev --prefix ..\" \"wait-on http://localhost:5173 && electron .\"",
+    "build": "electron-builder"
+  },
+  "build": {
+    "appId": "com.fixprohub.desktop",
+    "productName": "FixPro Hub",
+    "files": [
+      "*.js",
+      "!node_modules"
+    ],
+    "extraFiles": [
+      {
+        "from": "../dist",
+        "to": "dist"
+      }
+    ],
+    "win": {
+      "target": "nsis"
+    },
+    "linux": {
+      "target": "AppImage"
+    }
+  },
+  "devDependencies": {
+    "concurrently": "^8.0.0",
+    "electron": "^28.3.3",
+    "electron-builder": "^24.0.0",
+    "wait-on": "^7.0.0"
+  }
+}

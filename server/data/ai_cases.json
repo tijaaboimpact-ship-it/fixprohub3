@@ -1,0 +1,62 @@
+[
+  {
+    "device_model": "Redmi Note 12 Pro",
+    "error_type": "BROM_ERROR_SECURE_BOOT",
+    "repair_method": "Use Auth Bypass Tool v2.1 before flashing preloader. Disable secure boot check in SP Flash Tool.",
+    "success_rate": 95
+  },
+  {
+    "device_model": "Galaxy S23 Ultra",
+    "error_type": "ODIN_FAIL_PIT",
+    "repair_method": "Extract PIT file from CSC package and flash with re-partition enabled in Odin.",
+    "success_rate": 80
+  },
+  {
+    "device_model": "Galaxy S23 Ultra",
+    "error_type": "SW REV CHECK FAIL",
+    "repair_method": "Do not downgrade binary. Flash matching or higher firmware version. Use SamFw or Frija to get correct CSC.",
+    "success_rate": 98
+  },
+  {
+    "device_model": "POCO X6 Pro",
+    "error_type": "BROM_ERROR_AUTH_FAIL",
+    "repair_method": "Enter BROM mode via test point, use MTK Auth Bypass v3 with SP Flash Tool 5.1924.",
+    "success_rate": 88
+  },
+  {
+    "device_model": "OnePlus 11",
+    "error_type": "EDL_AUTH_ERROR",
+    "repair_method": "Use Sahara protocol firehose loader matching the SBL1 version. Verify your programmer file matches the exact device variant.",
+    "success_rate": 72
+  },
+  {
+    "device_model": "Infinix Note 40 Pro",
+    "error_type": "BROM_FAT_BLOCK_ERROR",
+    "repair_method": "Backup NVRAM first. Erase Frp and format storage before reflashing full scatter file.",
+    "success_rate": 91
+  },
+  {
+    "device_model": "Galaxy A54 5G",
+    "error_type": "ODIN_DEVICE_NOT_FOUND",
+    "repair_method": "Install Samsung USB Composite driver manually. Disable driver signature enforcement. Use Odin 3.14.4.",
+    "success_rate": 85
+  },
+  {
+    "device_model": "Realme GT 6T",
+    "error_type": "EDL_SAHARA_FAIL",
+    "repair_method": "Replace firehose programmer with variant B. Ensure USB is connected pre-boot via EDL cable.",
+    "success_rate": 67
+  },
+  {
+    "device_model": "Redmi Note 13 Pro+",
+    "error_type": "BROM_PRELOADER_TIMEOUT",
+    "repair_method": "Short TP12 & TP13 pads simultaneously while inserting USB. Use CH341A programmer if BROM is still inaccessible.",
+    "success_rate": 78
+  },
+  {
+    "device_model": "Pixel 8 Pro",
+    "error_type": "FASTBOOT_SIGNATURE_ERROR",
+    "repair_method": "Unlock bootloader first via 'fastboot flashing unlock'. Flash factory image with flash-all.bat script.",
+    "success_rate": 99
+  }
+]

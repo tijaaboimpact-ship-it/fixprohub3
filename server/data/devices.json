@@ -1,0 +1,107 @@
+[
+  {
+    "device_name": "Galaxy S23 Ultra",
+    "brand": "Samsung",
+    "chipset": "Snapdragon 8 Gen 2",
+    "loader_type": "odin",
+    "supported_operations": ["flash", "frp_unlock", "read_info", "imei_repair"]
+  },
+  {
+    "device_name": "Galaxy S24 Ultra",
+    "brand": "Samsung",
+    "chipset": "Snapdragon 8 Gen 3",
+    "loader_type": "odin",
+    "supported_operations": ["flash", "frp_unlock", "read_info"]
+  },
+  {
+    "device_name": "Galaxy A54 5G",
+    "brand": "Samsung",
+    "chipset": "Exynos 1380",
+    "loader_type": "odin",
+    "supported_operations": ["flash", "frp_unlock", "read_info"]
+  },
+  {
+    "device_name": "Redmi Note 12 Pro",
+    "brand": "Xiaomi",
+    "chipset": "MediaTek Dimensity 1080",
+    "loader_type": "brom",
+    "supported_operations": ["flash", "auth_bypass", "nvram_backup"]
+  },
+  {
+    "device_name": "Redmi Note 13 Pro+",
+    "brand": "Xiaomi",
+    "chipset": "MediaTek Dimensity 7200",
+    "loader_type": "brom",
+    "supported_operations": ["flash", "frp_unlock", "read_info"]
+  },
+  {
+    "device_name": "POCO X6 Pro",
+    "brand": "Xiaomi",
+    "chipset": "MediaTek Dimensity 8300",
+    "loader_type": "brom",
+    "supported_operations": ["flash", "frp_unlock", "nvram_backup"]
+  },
+  {
+    "device_name": "OnePlus 12",
+    "brand": "OnePlus",
+    "chipset": "Snapdragon 8 Gen 3",
+    "loader_type": "edl",
+    "supported_operations": ["flash", "frp_unlock", "read_info"]
+  },
+  {
+    "device_name": "OnePlus 11",
+    "brand": "OnePlus",
+    "chipset": "Snapdragon 8 Gen 2",
+    "loader_type": "edl",
+    "supported_operations": ["flash", "frp_unlock", "bootloader_unlock"]
+  },
+  {
+    "device_name": "Realme GT 6T",
+    "brand": "Realme",
+    "chipset": "Snapdragon 7s Gen 3",
+    "loader_type": "edl",
+    "supported_operations": ["flash", "frp_unlock"]
+  },
+  {
+    "device_name": "Infinix Note 40 Pro",
+    "brand": "Infinix",
+    "chipset": "MediaTek Helio G99",
+    "loader_type": "brom",
+    "supported_operations": ["flash", "frp_unlock", "nvram_backup"]
+  },
+  {
+    "device_name": "Tecno Camon 30 Pro",
+    "brand": "Tecno",
+    "chipset": "MediaTek Helio G99",
+    "loader_type": "brom",
+    "supported_operations": ["flash", "frp_unlock"]
+  },
+  {
+    "device_name": "Vivo V30 Pro",
+    "brand": "Vivo",
+    "chipset": "Snapdragon 7 Gen 3",
+    "loader_type": "edl",
+    "supported_operations": ["flash", "frp_unlock", "read_info"]
+  },
+  {
+    "device_name": "OPPO Reno 12 Pro",
+    "brand": "OPPO",
+    "chipset": "MediaTek Dimensity 7300",
+    "loader_type": "brom",
+    "supported_operations": ["flash", "frp_unlock"]
+  },
+  {
+    "device_name": "Pixel 8 Pro",
+    "brand": "Google",
+    "chipset": "Google Tensor G3",
+    "loader_type": "fastboot",
+    "supported_operations": ["flash", "bootloader_unlock", "read_info"]
+  },
+  {
+    "device_name": "iPhone 15 Pro",
+    "brand": "Apple",
+    "chipset": "Apple A17 Pro",
+    "loader_type": "dfu",
+    "supported_operations": ["restore", "read_info"]
+  }
+]

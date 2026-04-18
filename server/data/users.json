@@ -1,0 +1,37 @@
+[
+  {
+    "id": 1,
+    "name": "Admin User",
+    "email": "admin@fixpro.com",
+    "password": "admin",
+    "role": "admin"
+  },
+  {
+    "id": 2,
+    "name": "Technician One",
+    "email": "tech@fixpro.com",
+    "password": "tech",
+    "role": "user"
+  },
+  {
+    "id": 1774452823104,
+    "name": "moho abdi hassan",
+    "email": "admin123@gmail.com",
+    "password": "admin123",
+    "role": "user"
+  },
+  {
+    "id": 1775119198773,
+    "name": "ashraf ibnu jannaale",
+    "email": "ashrafibnujannaale@gmail.com",
+    "password": "ashraf",
+    "role": "user"
+  },
+  {
+    "id": 1775137608178,
+    "name": "cali maran",
+    "email": "tijaaboimpact@gmail.com",
+    "password": "ASHRAF#1143@",
+    "role": "user"
+  }
+]
