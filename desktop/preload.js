@@ -34,9 +34,12 @@ contextBridge.exposeInMainWorld('electronAPI', {
   /** Read GPT partition table */
   edlPartitions: (loaderPath) => ipcRenderer.send('edl-partitions', { loaderPath }),
 
-  /** Flash a partition: edl wl <file> --partitionname <partition> --loader <loader> */
-  edlFlash: (partition, filePath, loaderPath) =>
-    ipcRenderer.send('edl-flash', { partition, filePath, loaderPath }),
+  // Detect COM port for Qualcomm devices
+  edlDetectCom: () => ipcRenderer.send('edl-detect-com'),
+
+  /** Flash using emmcdl with rawprogram.xml */
+  edlFlashXml: (partition, firehosePath, rawprogramPath) =>
+    ipcRenderer.send('edl-flash-xml', { partition, firehosePath, rawprogramPath }),
 
   /** Erase a partition */
   edlErase: (partition, loaderPath) =>

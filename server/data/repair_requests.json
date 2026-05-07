@@ -1,0 +1,68 @@
+[
+  {
+    "id": 1,
+    "customerName": "Ahmed Hassan",
+    "phoneNumber": "+20 100 123 4567",
+    "deviceType": "Samsung Galaxy S24 Ultra",
+    "problemDescription": "Screen unresponsive after drop. Touch digitizer may need recalibration or replacement.",
+    "status": "in_progress",
+    "assignedTo": null,
+    "createdAt": "2026-04-28T08:00:00Z",
+    "updatedAt": "2026-04-28T08:35:41.542Z"
+  },
+  {
+    "id": 2,
+    "customerName": "Fatima Al-Rashid",
+    "phoneNumber": "+971 50 987 6543",
+    "deviceType": "iPhone 15 Pro Max",
+    "problemDescription": "Battery drains rapidly. Phone overheats during charging. Suspected faulty battery cell.",
+    "status": "in_progress",
+    "assignedTo": 1,
+    "createdAt": "2026-04-27T14:30:00Z",
+    "updatedAt": "2026-04-28T09:15:00Z"
+  },
+  {
+    "id": 3,
+    "customerName": "Mohamed Youssef",
+    "phoneNumber": "+20 111 222 3344",
+    "deviceType": "Xiaomi Redmi Note 13 Pro",
+    "problemDescription": "Stuck in bootloop after failed OTA update. Needs firmware reflash via EDL mode.",
+    "status": "pending",
+    "assignedTo": null,
+    "createdAt": "2026-04-28T10:00:00Z",
+    "updatedAt": "2026-04-28T10:00:00Z"
+  },
+  {
+    "id": 4,
+    "customerName": "Sara Mahmoud",
+    "phoneNumber": "+966 55 444 3322",
+    "deviceType": "Samsung Galaxy A54",
+    "problemDescription": "FRP lock after factory reset. Customer forgot Google account credentials.",
+    "status": "done",
+    "assignedTo": 1,
+    "createdAt": "2026-04-26T16:00:00Z",
+    "updatedAt": "2026-04-27T11:30:00Z"
+  },
+  {
+    "id": 5,
+    "customerName": "Khalid Ibrahim",
+    "phoneNumber": "+20 122 555 6677",
+    "deviceType": "Huawei P60 Pro",
+    "problemDescription": "Network unlock needed. Device is carrier locked to Vodafone Egypt.",
+    "status": "pending",
+    "assignedTo": null,
+    "createdAt": "2026-04-28T09:45:00Z",
+    "updatedAt": "2026-04-28T09:45:00Z"
+  },
+  {
+    "id": 6,
+    "customerName": "Layla Othman",
+    "phoneNumber": "+962 79 888 9900",
+    "deviceType": "Oppo Reno 11",
+    "problemDescription": "Water damage. Phone powers on but camera and speaker not functioning.",
+    "status": "in_progress",
+    "assignedTo": 1,
+    "createdAt": "2026-04-27T10:20:00Z",
+    "updatedAt": "2026-04-28T08:40:00Z"
+  }
+]

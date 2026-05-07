@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Smartphone, Play, Trash2, Upload, Download, ShieldOff, Info, RefreshCw } from 'lucide-react'
 

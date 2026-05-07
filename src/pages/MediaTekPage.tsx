@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { CircuitBoard, Usb, Play, Trash2, FileText, HardDrive, Upload, Shield } from 'lucide-react'
 

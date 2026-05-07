@@ -1,6 +1,6 @@
-import { useState, useEffect, useCallback, useRef } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { Cpu, Usb, Download, Trash2, Info, ShieldOff, Play, Square, RefreshCw, ChevronDown, FileText, HardDrive, Loader2 } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { motion } from 'framer-motion'
+import { Cpu, Zap, Trash2, FileText, HardDrive, Upload, Play, RefreshCcw, Info, ShieldCheck } from 'lucide-react'
 import { supabase } from '../supabaseClient'
 
 // Helper to dispatch log events to LogConsole and persist to Supabase
@@ -13,126 +13,44 @@ async function emitLog(level: 'info' | 'success' | 'warning' | 'error', message:
   }
 }
 
-declare global {
-  interface Window {
-    electronAPI?: any
-  }
-}
-
-const partitions = ['aboot', 'boot', 'system', 'userdata', 'recovery', 'modem', 'fsg', 'fsc', 'sbl1', 'rpm', 'tz', 'hyp', 'persist']
-
 export default function QualcommPage() {
-  const [device, setDevice] = useState<USBDevice | null>(null)
   const [connected, setConnected] = useState(false)
-  const [selectedLoader, setSelectedLoader] = useState('prog_ufs_firehose_sm8250.mbn')
-  const [selectedFirmwarePath, setSelectedFirmwarePath] = useState<string>('')
-  const [selectedPartition, setSelectedPartition] = useState<string>('boot')
-  const [logs, setLogs] = useState<string[]>(['[SYS] Qualcomm EDL Module Ready', '[SYS] Waiting for device in EDL mode...'])
+  const [logs, setLogs] = useState<string[]>(['[SYS] Qualcomm EDL Module Ready', '[SYS] Waiting for device in 9008 mode...'])
   const [progress, setProgress] = useState(0)
   const [isProcessing, setIsProcessing] = useState(false)
-  const [edlRunning, setEdlRunning] = useState(false)
-  const logBoxRef = useRef<HTMLDivElement | null>(null)
+  const [selectedLoader, setSelectedLoader] = useState<string>('')
+  const [selectedFirmwarePath, setSelectedFirmwarePath] = useState<string>('')
+  const [selectedPartition, setSelectedPartition] = useState<string>('boot')
 
-  // Extract device details (similar to PhoneMockup)
-  const getDeviceId = () => device?.serialNumber || device?.productName || 'unknown'
-
-  const connectDevice = async () => {
-    if (!('usb' in navigator)) {
-      emitLog('error', 'WebUSB not supported in this browser')
-      return
-    }
-    try {
-      setIsProcessing(true)
-      emitLog('info', '[USB] Scanning for Qualcomm devices...')
-      const usbDevice = await navigator.usb.requestDevice({ filters: [] }) // No specific filter for now
-      setDevice(usbDevice)
-      setConnected(true)
-      emitLog('success', `[USB] Device connected: ${usbDevice.manufacturerName || 'Generic'} ${usbDevice.productName || 'Phone'}`, usbDevice.serialNumber)
-    } catch (err: any) {
-      if (err?.name === 'NotFoundError') {
-        emitLog('warning', '[USB] User cancelled device selection')
-      } else {
-        emitLog('error', `[USB] Connection failed: ${err?.message || err}`)
-      }
-    } finally {
-      setIsProcessing(false)
-    }
-  }
-
-  const simulateFlash = () => {
-    setIsProcessing(true)
-    setProgress(0)
-    setLogs(prev => [...prev, '[FLASH] Starting flash operation...'])
-    const interval = setInterval(() => {
-      setProgress(prev => {
-        if (prev >= 100) {
-          clearInterval(interval)
-          setLogs(p => [...p, '[FLASH] Flash completed successfully ✓'])
-          setIsProcessing(false)
-          return 100
-        }
-        return prev + 5
-      })
-    }, 150)
-  }
-
-  const mapLevel = (level: string): 'info' | 'success' | 'warning' | 'error' => {
-    const l = level.trim().toUpperCase()
-    if (l === 'SUCCESS') return 'success'
-    if (l === 'ERROR') return 'error'
-    if (l === 'WARNING' || l === 'WARN') return 'warning'
-    return 'info'
-  }
-
-  const appendLogLine = (rawLine: string) => {
-    const line = rawLine.trim()
-    if (!line) return
-
-    const pipeIdx = line.indexOf('|')
-    let level = 'INFO'
-    let message = line
-
-    if (pipeIdx !== -1) {
-      level = line.slice(0, pipeIdx)
-      message = line.slice(pipeIdx + 1)
-    }
-
+  const appendLogLine = (type: string, message: string) => {
     setLogs((prev) => [...prev, message])
-    void emitLog(mapLevel(level), message, getDeviceId())
+    void emitLog(type as any, message)
   }
 
   useEffect(() => {
-    // Check if EDL tools are available
-    if (window.electronAPI?.edlCheck) {
-      window.electronAPI.edlCheck()
-    }
-    
-    // Listen for EDL IPC events from main process
-    if (window.electronAPI?.onEdlEvent) {
-      window.electronAPI.onEdlEvent((payload: any) => {
+    if (window.electronAPI?.onQualcommEvent) {
+      window.electronAPI.onQualcommEvent((payload: any) => {
         if (!payload) return
-        
         switch (payload.type) {
           case 'info':
           case 'warning':
           case 'error':
           case 'success':
-            appendLogLine(`${payload.type.toUpperCase()}|${payload.data}`)
+            appendLogLine(payload.type, payload.data)
             break
           case 'progress':
             setProgress(Number(payload.data) || 0)
             break
           case 'done':
             setIsProcessing(false)
-            setEdlRunning(false)
-            appendLogLine(payload.data === 0 ? 'SUCCESS|Operation Completed successfully ✓' : `ERROR|Operation Failed (Code ${payload.data})`)
+            appendLogLine(payload.data === 0 ? 'success' : 'error', payload.data === 0 ? 'Operation Completed successfully ✓' : `Operation Failed (Code ${payload.data})`)
             break
           case 'detect':
              if (payload.found) {
-                 appendLogLine(`SUCCESS|Qualcomm Device Detected: ${payload.data}`)
+                 appendLogLine('success', `Qualcomm Device Detected: ${payload.data}`)
                  setConnected(true)
              } else {
-                 appendLogLine(`WARNING|${payload.data}`)
+                 appendLogLine('warning', payload.data || 'No device detected')
                  setConnected(false)
              }
              setIsProcessing(false)
@@ -142,57 +60,52 @@ export default function QualcommPage() {
     }
 
     return () => {
-      if (window.electronAPI?.removeAllListeners) {
-        window.electronAPI.removeAllListeners('edl-event')
-      }
+      if (window.electronAPI?.removeAllListeners) window.electronAPI.removeAllListeners('qualcomm-event')
     }
   }, [])
 
-  useEffect(() => {
-    if (!logBoxRef.current) return
-    logBoxRef.current.scrollTop = logBoxRef.current.scrollHeight
-  }, [logs])
+  const runDetect = () => {
+    if (!window.electronAPI?.qualcommDetect) return
+    setIsProcessing(true)
+    setLogs(['[SYS] Scanning for Qualcomm QDLoader 9008...'])
+    window.electronAPI.qualcommDetect()
+  }
 
-  const runEdlReadDeviceInfo = async () => {
-    if (!window.electronAPI?.edlReadInfo) {
-      appendLogLine('ERROR|EDL features need desktop application privileges.')
+  const runReadInfo = () => {
+    if (!window.electronAPI?.qualcommReadInfo) return
+    setIsProcessing(true)
+    setLogs(['[EDL] Reading Device Information...'])
+    window.electronAPI.qualcommReadInfo(selectedLoader)
+  }
+
+  const runPrintGPT = () => {
+    if (!window.electronAPI?.qualcommPrintGPT) return
+    setIsProcessing(true)
+    setLogs(['[EDL] Reading Partition Table (GPT)...'])
+    window.electronAPI.qualcommPrintGPT(selectedLoader)
+  }
+
+  const runFlash = () => {
+    if (!window.electronAPI?.qualcommFlash) return
+    if (!selectedFirmwarePath) {
+      appendLogLine('error', 'No firmware file selected.')
       return
     }
-    setEdlRunning(true)
     setIsProcessing(true)
-    setLogs(['[SYS] Requesting device info via EDL...', '[SYS] Loading Firehose: ' + selectedLoader])
-    window.electronAPI.edlReadInfo(selectedLoader)
+    setProgress(0)
+    setLogs([`[FLASH] Writing ${selectedFirmwarePath.split('\\').pop()} to ${selectedPartition}...`]);
+    window.electronAPI.qualcommFlash(selectedPartition, selectedFirmwarePath, selectedLoader)
   }
 
-  const runEdlDetect = async () => {
-    if (!window.electronAPI?.edlDetect) {
-       connectDevice() // Fallback to WebUSB
-       return
-    }
+  const runReset = () => {
+    if (!window.electronAPI?.qualcommReset) return
     setIsProcessing(true)
-    setLogs(['[SYS] Scanning for EDL 9008 devices...'])
-    window.electronAPI.edlDetect()
-  }
-
-  const runEdlFlash = () => {
-     if (!window.electronAPI?.edlFlash) return
-     if (!selectedFirmwarePath) {
-       appendLogLine('ERROR|No firmware file selected. Please select a file first.')
-       return
-     }
-     setLogs(['[FLASH] Connecting to device and preparing to flash...'])
-     setIsProcessing(true)
-     setProgress(0)
-     window.electronAPI.edlFlash(selectedPartition, selectedFirmwarePath, selectedLoader)
+    setLogs(['[EDL] Sending Reset command...'])
+    window.electronAPI.qualcommReset('reset', selectedLoader)
   }
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4 }}
-      className="space-y-6"
-    >
+    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="space-y-6">
       {/* Header */}
       <div className="glass-card p-6">
         <div className="flex items-center justify-between">
@@ -202,12 +115,12 @@ export default function QualcommPage() {
             </div>
             <div>
               <h2 className="text-lg font-bold text-white">Qualcomm EDL Tool</h2>
-              <p className="text-xs text-gray-500">Sahara + Firehose Protocol • Emergency Download Mode</p>
+              <p className="text-xs text-gray-500">Firehose + Sahara Protocol (QDLoader 9008)</p>
             </div>
           </div>
           <div className={`flex items-center gap-2 px-4 py-2 rounded-xl border ${connected ? 'bg-green-500/10 border-green-500/20 text-green-400' : 'bg-dark-700 border-dark-500/30 text-gray-400'}`}>
             <div className={`w-2 h-2 rounded-full ${connected ? 'bg-green-500 animate-pulse' : 'bg-gray-600'}`} />
-            <span className="text-xs font-medium">{connected ? 'Connected — EDL 9008' : 'No Device'}</span>
+            <span className="text-xs font-medium">{connected ? 'Connected — EDL' : 'No Device'}</span>
           </div>
         </div>
       </div>
@@ -215,139 +128,102 @@ export default function QualcommPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Controls */}
         <div className="lg:col-span-1 space-y-4">
-          {/* Loader selection */}
           <div className="glass-card p-5">
             <h3 className="text-sm font-semibold text-white mb-3 flex items-center gap-2">
-              <FileText className="w-4 h-4 text-blue-400" /> Firehose Loader
+              <ShieldCheck className="w-4 h-4 text-blue-400" /> Firehose Loader
             </h3>
-            <select
-              value={selectedLoader}
-              onChange={e => setSelectedLoader(e.target.value)}
-              className="w-full bg-dark-700 border border-dark-500/50 rounded-xl px-3 py-2.5 text-xs text-gray-300 focus:outline-none focus:border-blue-500/40"
-            >
-              <option>prog_ufs_firehose_sm8250.mbn</option>
-              <option>prog_ufs_firehose_sm6150.mbn</option>
-              <option>prog_emmc_firehose_sm8150.mbn</option>
-              <option>prog_ufs_firehose_sdm845.mbn</option>
-            </select>
+            <div className="space-y-3">
+              <label className="flex items-center justify-center w-full h-12 border-2 border-dashed border-dark-500/50 rounded-xl hover:border-blue-500/50 transition-colors cursor-pointer bg-dark-700/50 group relative overflow-hidden">
+                <input 
+                  type="file" 
+                  className="absolute inset-0 opacity-0 cursor-pointer w-full h-full" 
+                  accept=".mbn,.bin,.elf" 
+                  onChange={(e: any) => setSelectedLoader(e.target.files?.[0]?.path || '')} 
+                />
+                <span className="text-xs text-gray-400 font-medium group-hover:text-blue-400 text-center truncate w-full px-2">
+                  {selectedLoader ? selectedLoader.split('\\').pop() : 'Select Custom Loader (Optional)'}
+                </span>
+              </label>
+              <p className="text-[10px] text-gray-500">Auto-detect will attempt to find a compatible loader if left empty.</p>
+            </div>
           </div>
 
-          {/* Firmware Selection */}
           <div className="glass-card p-5">
             <h3 className="text-sm font-semibold text-white mb-3 flex items-center gap-2">
-              <Download className="w-4 h-4 text-orange-400" /> Firmware File
+              <HardDrive className="w-4 h-4 text-blue-400" /> Flash Operations
             </h3>
-            <label className="flex items-center justify-center w-full h-16 border-2 border-dashed border-dark-500/50 rounded-xl hover:border-blue-500/50 transition-colors cursor-pointer bg-dark-700/50 group relative overflow-hidden">
-               <input 
-                 type="file" 
-                 className="absolute inset-0 opacity-0 cursor-pointer w-full h-full" 
-                 accept=".img,.bin,.mbn" 
-                 onChange={(e: any) => setSelectedFirmwarePath(e.target.files?.[0]?.path || '')} 
-               />
-               <span className="text-xs text-gray-400 font-medium group-hover:text-blue-400 transition-colors px-4 text-center truncate w-full" title={selectedFirmwarePath}>
-                 {selectedFirmwarePath ? selectedFirmwarePath.split('\\').pop()?.split('/').pop() : 'Click to select .img / .mbn file'}
-               </span>
-            </label>
+            <div className="space-y-3">
+               <select value={selectedPartition} onChange={e => setSelectedPartition(e.target.value)} className="w-full bg-dark-700 border border-dark-500/50 rounded-xl px-3 py-2 text-xs text-gray-300 focus:outline-none focus:border-blue-500/40">
+                  <option value="boot">boot</option>
+                  <option value="recovery">recovery</option>
+                  <option value="system">system</option>
+                  <option value="vendor">vendor</option>
+                  <option value="userdata">userdata</option>
+                  <option value="persist">persist</option>
+               </select>
+
+               <label className="flex items-center justify-center w-full h-12 border-2 border-dashed border-dark-500/50 rounded-xl hover:border-blue-500/50 transition-colors cursor-pointer bg-dark-700/50 group relative overflow-hidden">
+                 <input 
+                   type="file" 
+                   className="absolute inset-0 opacity-0 cursor-pointer w-full h-full" 
+                   accept=".img,.bin,.xml" 
+                   onChange={(e: any) => setSelectedFirmwarePath(e.target.files?.[0]?.path || '')} 
+                 />
+                 <span className="text-xs text-gray-400 font-medium group-hover:text-blue-400 text-center truncate w-full px-2">
+                   {selectedFirmwarePath ? selectedFirmwarePath.split('\\').pop() : 'Select Image File'}
+                 </span>
+               </label>
+            </div>
           </div>
 
-          {/* Actions */}
           <div className="glass-card p-5 space-y-3">
             <h3 className="text-sm font-semibold text-white mb-3 flex items-center gap-2">
-              <Play className="w-4 h-4 text-green-400" /> Actions
+              <Play className="w-4 h-4 text-green-400" /> Main Actions
             </h3>
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={runEdlDetect}
-              disabled={isProcessing}
-              className="btn-premium w-full py-2.5 rounded-xl bg-gradient-to-r from-blue-500 to-cyan-500 text-white text-xs font-semibold shadow-lg shadow-blue-500/20 disabled:opacity-50 transition-all"
-            >
-              {isProcessing ? 'Processing...' : 'Detect EDL Device'}
+            <div className="grid grid-cols-2 gap-2">
+              <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={runDetect} disabled={isProcessing}
+                className="w-full py-2.5 rounded-xl bg-dark-700 border border-dark-500/50 text-white text-xs font-semibold hover:border-blue-500/30 transition-all flex items-center justify-center gap-2">
+                <RefreshCcw className={`w-3.5 h-3.5 ${isProcessing ? 'animate-spin' : ''}`} /> Scan
+              </motion.button>
+              <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={runReadInfo} disabled={!connected || isProcessing}
+                className="w-full py-2.5 rounded-xl bg-dark-700 border border-dark-500/50 text-white text-xs font-semibold hover:border-blue-500/30 transition-all flex items-center justify-center gap-2">
+                <Info className="w-3.5 h-3.5" /> Info
+              </motion.button>
+            </div>
+            
+            <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={runPrintGPT} disabled={!connected || isProcessing}
+              className="w-full py-2.5 rounded-xl bg-dark-700 border border-dark-500/50 text-white text-xs font-semibold hover:border-blue-500/30 transition-all flex items-center justify-center gap-2">
+              <FileText className="w-3.5 h-3.5" /> Read Partition Table
             </motion.button>
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={runEdlReadDeviceInfo}
-              disabled={!connected || isProcessing || edlRunning}
-              className="btn-premium w-full py-2.5 rounded-xl bg-gradient-to-r from-green-500 to-emerald-500 text-white text-xs font-semibold shadow-lg shadow-green-500/20 disabled:opacity-50 transition-all"
-            >
-              {edlRunning ? 'Running EDL…' : 'Read Device Info'}
-            </motion.button>
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={runEdlFlash}
-              disabled={!connected || isProcessing}
-              className="btn-premium w-full py-2.5 rounded-xl bg-gradient-to-r from-red-500 to-orange-500 text-white text-xs font-semibold shadow-lg shadow-red-500/20 disabled:opacity-50 transition-all"
-            >
-              Flash Firmware (Test)
-            </motion.button>
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={() => {
-                if (window.electronAPI?.edlPartitions) {
-                   setLogs(['[SYS] Reading partition table...'])
-                   window.electronAPI.edlPartitions(selectedLoader)
-                }
-              }}
-              disabled={!connected || isProcessing}
-              className="btn-premium w-full py-2.5 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs font-semibold shadow-lg shadow-purple-500/20 disabled:opacity-50 transition-all"
-            >
-              Read Partitions (GPT)
-            </motion.button>
-          </div>
 
-          {/* Partition selector */}
-          <div className="glass-card p-5">
-            <h3 className="text-sm font-semibold text-white mb-3 flex items-center gap-2">
-              <HardDrive className="w-4 h-4 text-purple-400" /> Partitions
-            </h3>
-            <div className="flex flex-wrap gap-2">
-              {partitions.map(p => {
-                const isSelected = p === selectedPartition;
-                return (
-                  <button 
-                    key={p} 
-                    onClick={() => setSelectedPartition(p)}
-                    className={`px-2.5 py-1 text-[10px] font-mono border rounded-lg transition-all ${
-                      isSelected 
-                        ? 'bg-purple-500/20 text-purple-300 border-purple-500/50' 
-                        : 'bg-dark-700 border-dark-500/30 text-gray-400 hover:text-white hover:border-blue-500/30'
-                    }`}
-                  >
-                    {p}
-                  </button>
-                )
-              })}
+            <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={runFlash} disabled={!connected || isProcessing}
+              className="btn-premium w-full py-2.5 rounded-xl bg-gradient-to-r from-blue-500 to-cyan-500 text-white text-xs font-semibold shadow-lg shadow-blue-500/20 disabled:opacity-50 flex items-center justify-center gap-2">
+              <Zap className="w-3.5 h-3.5" /> Flash Selected
+            </motion.button>
+
+            <div className="pt-2 border-t border-dark-500/20">
+              <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={runReset} disabled={!connected || isProcessing}
+                className="w-full py-2.5 rounded-xl bg-dark-700/50 border border-red-500/20 text-red-400 text-xs font-semibold hover:bg-red-500/5 transition-all flex items-center justify-center gap-2">
+                <RefreshCcw className="w-3.5 h-3.5" /> Reset / Reboot
+              </motion.button>
             </div>
           </div>
         </div>
 
-        {/* Log + Progress */}
+        {/* Log */}
         <div className="lg:col-span-2 space-y-4">
-          {/* Progress */}
           {progress > 0 && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              className="glass-card p-5"
-            >
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="glass-card p-5">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-xs text-gray-400">Flash Progress</span>
                 <span className="text-xs font-bold text-white">{progress}%</span>
               </div>
               <div className="w-full h-3 bg-dark-700 rounded-full overflow-hidden">
-                <motion.div
-                  initial={{ width: 0 }}
-                  animate={{ width: `${progress}%` }}
-                  className="h-full bg-gradient-to-r from-red-500 via-orange-500 to-green-500 rounded-full"
-                />
+                <motion.div animate={{ width: `${progress}%` }} className="h-full bg-gradient-to-r from-blue-500 to-green-500 rounded-full" />
               </div>
             </motion.div>
           )}
 
-          {/* Console */}
           <div className="glass-card p-5 h-[500px] flex flex-col">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
@@ -358,17 +234,13 @@ export default function QualcommPage() {
                 </div>
                 <span className="text-xs text-gray-500 ml-2 font-mono">qualcomm_edl.log</span>
               </div>
-              <button onClick={() => setLogs([])} className="p-1.5 rounded-lg hover:bg-dark-600">
-                <Trash2 className="w-3.5 h-3.5 text-gray-500" />
-              </button>
+              <button onClick={() => setLogs([])} className="p-1.5 rounded-lg hover:bg-dark-600"><Trash2 className="w-3.5 h-3.5 text-gray-500" /></button>
             </div>
-            <div ref={logBoxRef} className="flex-1 bg-dark-900/80 rounded-xl p-4 overflow-y-auto border border-dark-500/20 font-mono text-xs space-y-0.5">
+            <div className="flex-1 bg-dark-900/80 rounded-xl p-4 overflow-y-auto border border-dark-500/20 font-mono text-xs space-y-0.5">
               {logs.map((log, i) => (
-                <div key={i} className={`${log.includes('✓') || log.includes('OK') || log.includes('success') ? 'text-green-400' : log.includes('Error') || log.includes('FAIL') ? 'text-red-400' : log.includes('Warning') || log.includes('ACTIVE') ? 'text-orange-400' : 'text-blue-400'}`}>
-                  {log}
-                </div>
+                <div key={i} className={`${log.includes('✓') || log.includes('OK') || log.includes('success') ? 'text-green-400' : log.toLowerCase().includes('error') ? 'text-red-400' : 'text-blue-400'}`}>{log}</div>
               ))}
-              <div className="text-green-400 animate-pulse">{'> '}█</div>
+              <div className="text-blue-400 animate-pulse">{'> '}█</div>
             </div>
           </div>
         </div>

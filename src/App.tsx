@@ -8,6 +8,7 @@ import SamsungPage from './pages/SamsungPage'
 import FlashPage from './pages/FlashPage'
 import UnlockPage from './pages/UnlockPage'
 import FRPPage from './pages/FRPPage'
+import RepairRequestsPage from './pages/RepairRequestsPage'
 import LoaderManager from './pages/LoaderManager'
 import SettingsPage from './pages/SettingsPage'
 import AIAssistantPage from './pages/AIAssistantPage'
@@ -16,7 +17,7 @@ import AuthPage from './pages/AuthPage'
 import AdminPanel from './pages/AdminPanel'
 import LandingPage from './pages/LandingPage'
 
-export type PageId = 'dashboard' | 'qualcomm' | 'mediatek' | 'samsung' | 'flash' | 'unlock' | 'frp' | 'loaders' | 'ai' | 'settings' | 'license' | 'admin'
+export type PageId = 'dashboard' | 'requests' | 'qualcomm' | 'mediatek' | 'samsung' | 'flash' | 'unlock' | 'frp' | 'loaders' | 'ai' | 'settings' | 'license' | 'admin'
 
 function App() {
   const [activePage, setActivePage] = useState<PageId>('dashboard')
@@ -32,6 +33,7 @@ function App() {
   const renderPage = () => {
     switch (activePage) {
       case 'dashboard': return <Dashboard onNavigate={setActivePage} />
+      case 'requests': return <RepairRequestsPage />
       case 'qualcomm': return <QualcommPage />
       case 'mediatek': return <MediaTekPage />
       case 'samsung': return <SamsungPage />

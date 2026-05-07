@@ -5,18 +5,6 @@ import { Battery, Wifi, Signal, Usb, Smartphone, Loader2 } from 'lucide-react'
 import { supabase } from '../supabaseClient'
 
 // Declare the contextBridge API exposed by desktop/preload.js
-declare global {
-  interface Window {
-    electronAPI?: {
-      flashDevice: (partition: string, file: string, loader?: string) => void
-      readDevice: (comPort: string) => void
-      onFlashEvent: (cb: (payload: { type: string; data: string | number }) => void) => void
-      onReadResult: (cb: (payload: { success: boolean; data?: Record<string, string>; error?: string }) => void) => void
-      removeAllListeners: (channel: string) => void
-    }
-  }
-}
-
 let currentDeviceId: string | null = null;
 
 // Helper to dispatch log events to LogConsole

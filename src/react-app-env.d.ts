@@ -72,3 +72,46 @@ declare module '*.module.sass' {
   const classes: { readonly [key: string]: string }
   export default classes
 }
+
+interface Window {
+  electronAPI?: {
+    // MediaTek
+    mtkCheck?: () => void
+    mtkDetect?: () => void
+    mtkFlash?: (partition: string, filePath: string, da: string, scatter?: string) => void
+    onMtkEvent?: (callback: (payload: any) => void) => void
+    
+    // Qualcomm
+    edlCheck?: () => void
+    edlDetect?: () => void
+    edlReadInfo?: (loader: string) => void
+    edlFlash?: (partition: string, filePath: string, loader: string) => void
+    edlPartitions?: (loader: string) => void
+    onEdlEvent?: (callback: (payload: any) => void) => void
+    
+    // Samsung
+    samsungCheck?: () => void
+    samsungDetect?: () => void
+    samsungFlash?: (files: { bl: string; ap: string; cp: string; csc: string }) => void
+    onSamsungEvent?: (callback: (payload: any) => void) => void
+    
+    // FRP
+    runFrp?: (vendor: string, mode: string) => void
+    onFrpEvent?: (callback: (payload: any) => void) => void
+    
+    // Unlock
+    runUnlock?: (method: string) => void
+    onUnlockEvent?: (callback: (payload: any) => void) => void
+    
+    // Flash
+    flashDevice: (partition: string, file: string, loader?: string) => void
+    onFlashEvent: (callback: (payload: { type: string; data: string | number }) => void) => void
+    
+    // Device Read
+    readDevice: (comPort: string) => void
+    onReadResult: (callback: (payload: { success: boolean; data?: Record<string, string>; error?: string }) => void) => void
+    
+    // General
+    removeAllListeners: (channel: string) => void
+  }
+}

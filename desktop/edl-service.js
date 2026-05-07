@@ -194,7 +194,31 @@ function resetDevice(mode, loaderPath, onLine, onDone) {
   proc.on('error', err => { onLine('error', `[EDL] ${err.message}`); onDone(false, -1); });
 }
 
+function detectComPort(callback) {
+  // Use PowerShell to list serial ports matching Qualcomm VID/PID
+  const psCommand = `Get-WmiObject Win32_SerialPort | Where-Object { $_.PNPDeviceID -match "VID_05C6.*PID_9008" } | Select-Object -ExpandProperty DeviceID`;
+  exec(`powershell -Command "${psCommand}"`, { shell: true }, (err, stdout, stderr) => {
+    if (err) {
+      callback('', `Error detecting COM port: ${err.message}`);
+      return;
+    }
+    const port = stdout.trim();
+    callback(port, port ? `Found COM port ${port}` : 'No Qualcomm COM port found');
+  });
+}
+
 module.exports = {
+  QUALCOMM_VID,
+  EDL_PIDS,
+  checkEdlAvailable,
+  detectEdlDevice,
+  readEdlDeviceInfo,
+  readPartitionTable,
+  flashPartition,
+  erasePartition,
+  resetDevice,
+  detectComPort,
+};
   QUALCOMM_VID,
   EDL_PIDS,
   checkEdlAvailable,

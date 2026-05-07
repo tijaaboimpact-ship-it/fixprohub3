@@ -2,7 +2,7 @@ import { motion } from 'framer-motion'
 import {
   LayoutDashboard, Cpu, CircuitBoard, Smartphone,
   Zap, Unlock, ShieldOff, HardDrive, Settings,
-  ChevronLeft, ChevronRight, Wrench, BrainCircuit, ShieldCheck
+  ChevronLeft, ChevronRight, Wrench, BrainCircuit, ShieldCheck, ClipboardList
 } from 'lucide-react'
 import type { PageId } from '../App'
 
@@ -18,6 +18,7 @@ import { ShieldAlert } from 'lucide-react'
 
 const menuItems: { id: PageId; label: string; icon: any; color: string; adminOnly?: boolean }[] = [
   { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, color: 'text-accent-red' },
+  { id: 'requests', label: 'Repair Requests', icon: ClipboardList, color: 'text-cyan-400' },
   { id: 'qualcomm', label: 'Qualcomm', icon: Cpu, color: 'text-accent-blue' },
   { id: 'mediatek', label: 'MediaTek', icon: CircuitBoard, color: 'text-accent-orange' },
   { id: 'samsung', label: 'Samsung', icon: Smartphone, color: 'text-accent-cyan' },
